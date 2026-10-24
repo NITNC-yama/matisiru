@@ -20,13 +20,15 @@ L.Icon.Default.mergeOptions({
 document.addEventListener('DOMContentLoaded', () => {
 
 // ==========================================
-    // 1. 地図の初期化 (確実に表示されるOpenStreetMap ＋ 文字非表示)
     // ==========================================
-    let currentPosition = { lat: 37.3130, lng: 138.7950 };
+    // 1. 地図の初期化 (日本全体を表示)
+    // ==========================================
+    let currentPosition = { lat: 36.5, lng: 137.5 };
     let targetSpotForAddPhoto = null; // 「この場所で写真を追加」用の対象スポット
+
     const map = L.map('map', {
-        attributionControl: false // ここで右下のクレジット文字を綺麗に消す
-    }).setView([currentPosition.lat, currentPosition.lng], 13);
+         attributionControl: false // クレジット文字非表示
+    }).setView([36.5, 137.5], 5); // ズームレベル5で日本全国を表示
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
@@ -95,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     currentPosition = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                    map.setView([currentPosition.lat, currentPosition.lng], 15);
+                    // ❌ ページ読み込み時に勝手に現在地へジャンプさせないため、setViewをコメントアウトまたは削除する
+                    // map.setView([currentPosition.lat, currentPosition.lng], 15);
                     updatePostLocationDisplay();
                 },
                 (err) => {
@@ -105,6 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
     }
+                    updatePostLocationDisplay();
+                },
+                (err) => {
+                    console.log('現在地取得失敗: ' + err.message);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+    
 
     if (applyNmeaBtn) {
         applyNmeaBtn.addEventListener('click', () => {
@@ -960,5 +971,4 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('スポットを投稿しました！');
         });
     }
-
-});
+;
